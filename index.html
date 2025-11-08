@@ -14,10 +14,22 @@
         </header>
 
         <div class="template-selector">
-            <h2>Select Template</h2>
+            <div class="parts-category-selector">
+                <button class="parts-category-btn active">Plumbing Parts</button>
+                <button class="parts-category-btn disabled">Electrical Parts</button>
+                <button class="parts-category-btn disabled">Concrete Parts</button>
+                <button class="parts-category-btn disabled">HVAC & Mechanical</button>
+                <button class="parts-category-btn disabled">Flooring</button>
+                <button class="parts-category-btn disabled">Doors, Windows & Hardware</button>
+            </div>
+            <h2>Plumbing Parts</h2>
             <div class="template-buttons">
                 <div class="template-item">
-                    <button class="template-btn active" data-template="rough-in">Rough In</button>
+                    <button class="template-btn active" data-template="all-parts">All Parts</button>
+                    <p class="template-description">View all available parts and materials</p>
+                </div>
+                <div class="template-item">
+                    <button class="template-btn" data-template="rough-in">Rough In</button>
                     <p class="template-description">show me only PVC fittings and pipe</p>
                 </div>
                 <div class="template-item">
@@ -33,7 +45,6 @@
 
         <div class="calculator-section">
             <div class="materials-section">
-                <h2>Materials</h2>
                 <div class="search-box">
                     <input type="text" id="materialSearch" placeholder="Search materials by Part ID, Detail, Size, or Make...">
                 </div>
@@ -58,8 +69,114 @@
                 </div>
                 <div id="selectedItems" class="selected-items"></div>
                 <button id="clearBtn" class="clear-btn">Clear All</button>
-                <button id="exportPdfBtn" class="export-pdf-btn">Export as PDF</button>
+                <div class="action-buttons">
+                    <button id="exportPdfBtn" class="export-pdf-btn">Export as PDF</button>
+                    <button id="payNowBtn" class="pay-now-btn">Pay Now</button>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Pay Now Modal -->
+    <div id="payNowModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Complete Your Order</h2>
+            <form id="payNowForm">
+                <div class="form-group">
+                    <label for="customerName">Full Name *</label>
+                    <input type="text" id="customerName" name="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerEmail">Email *</label>
+                    <input type="email" id="customerEmail" name="customerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerPhone">Phone Number *</label>
+                    <input type="tel" id="customerPhone" name="customerPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerAddress">Address *</label>
+                    <textarea id="customerAddress" name="customerAddress" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Delivery Option *</label>
+                    <div class="delivery-options">
+                        <label class="radio-label">
+                            <input type="radio" name="deliveryOption" value="standard" checked>
+                            <span>Standard Delivery</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="deliveryOption" value="rush" id="rushOption">
+                            <span>Rush Delivery</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" id="deliveryDateGroup">
+                    <label for="orderDeliveryDate">Delivery Date *</label>
+                    <input type="date" id="orderDeliveryDate" name="orderDeliveryDate" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="sendForCallbackBtn" class="send-callback-btn">Send for Call Back</button>
+                    <button type="button" id="payNowPaymentBtn" class="pay-now-payment-btn">Pay Now</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close payment-modal-close">&times;</span>
+            <h2>Payment Information</h2>
+            
+            <div class="payment-warnings">
+                <div class="warning-box">
+                    <p><strong>Important Notice:</strong></p>
+                    <ul>
+                        <li>There is a <strong>20% restocking fee</strong> for unshipped items after 30 days.</li>
+                        <li>Abuse of this online tool may lead to denial of service in the future for your person or company.</li>
+                        <li>Payment for shipping will not be collected immediately, you will be called when the order is packaged and ready for shipment.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label>Payment Method *</label>
+                    <div class="payment-options">
+                        <label class="radio-label">
+                            <input type="radio" name="paymentMethod" value="ach" checked>
+                            <span>ACH Payment</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="paymentMethod" value="wire">
+                            <span>Wire Transfer</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="stripe-connect-section">
+                    <h3>Connect Your Bank Account</h3>
+                    <p class="stripe-description">Securely connect your bank account through Stripe to complete your payment.</p>
+                    
+                    <div id="stripeConnectButton" class="stripe-connect-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.905 0-4.357-1.061-5.93-1.97L5 23.06c1.664.706 4.357 1.346 7.309 1.346 2.42 0 4.76-.624 6.43-1.688 1.86-1.188 2.966-3.152 2.966-5.267 0-4.763-2.315-6.302-6.73-7.281z" fill="#635BFF"/>
+                        </svg>
+                        Connect Bank Account with Stripe
+                    </div>
+                    
+                    <div id="stripeStatus" class="stripe-status" style="display: none;">
+                        <p class="stripe-success">✓ Bank account connected successfully</p>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="cancelPaymentBtn" class="cancel-payment-btn">Cancel</button>
+                    <button type="button" id="completePaymentBtn" class="complete-payment-btn" disabled>Complete Payment</button>
+                </div>
+            </form>
         </div>
     </div>
 

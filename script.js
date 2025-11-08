@@ -631,11 +631,16 @@ const TEMPLATES = {
         name: 'Trim Set',
         description: 'Trim set materials for fixture connections',
         defaultMaterials: ['XP12COUP', 'XP1290', 'XP12T', 'XP12MA', 'B12COUP', 'B1290']
+    },
+    'all-parts': {
+        name: 'All Parts',
+        description: 'View all available parts and materials',
+        defaultMaterials: [] // Empty means show all materials
     }
 };
 
 // Application state
-let currentTemplate = 'rough-in';
+let currentTemplate = 'all-parts';
 let selectedMaterials = {}; // { partId: { material, quantity } }
 let filteredMaterials = [...MATERIALS_DATA];
 
@@ -648,6 +653,19 @@ const totalPrice = document.getElementById('totalPrice');
 const deliveryDate = document.getElementById('deliveryDate');
 const clearBtn = document.getElementById('clearBtn');
 const exportPdfBtn = document.getElementById('exportPdfBtn');
+const payNowBtn = document.getElementById('payNowBtn');
+const payNowModal = document.getElementById('payNowModal');
+const modalClose = document.querySelector('.modal-close');
+const rushOption = document.getElementById('rushOption');
+const deliveryDateGroup = document.getElementById('deliveryDateGroup');
+const sendForCallbackBtn = document.getElementById('sendForCallbackBtn');
+const payNowPaymentBtn = document.getElementById('payNowPaymentBtn');
+const paymentModal = document.getElementById('paymentModal');
+const paymentModalClose = document.querySelector('.payment-modal-close');
+const stripeConnectButton = document.getElementById('stripeConnectButton');
+const stripeStatus = document.getElementById('stripeStatus');
+const completePaymentBtn = document.getElementById('completePaymentBtn');
+const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
 const templateButtons = document.querySelectorAll('.template-btn');
 
 // Initialize
@@ -665,6 +683,63 @@ function setupEventListeners() {
     });
     clearBtn.addEventListener('click', clearAll);
     exportPdfBtn.addEventListener('click', exportToPdf);
+    
+    // Pay Now modal
+    if (payNowBtn) {
+        payNowBtn.addEventListener('click', openPayNowModal);
+    }
+    if (modalClose) {
+        modalClose.addEventListener('click', closePayNowModal);
+    }
+    if (payNowModal) {
+        payNowModal.addEventListener('click', (e) => {
+            if (e.target === payNowModal) {
+                closePayNowModal();
+            }
+        });
+    }
+    if (rushOption) {
+        rushOption.addEventListener('change', handleDeliveryOptionChange);
+    }
+    // Handle standard delivery option
+    const standardOption = document.querySelector('input[name="deliveryOption"][value="standard"]');
+    if (standardOption) {
+        standardOption.addEventListener('change', handleDeliveryOptionChange);
+    }
+    if (sendForCallbackBtn) {
+        sendForCallbackBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Button does nothing as requested
+        });
+    }
+    
+    // Payment modal
+    if (payNowPaymentBtn) {
+        payNowPaymentBtn.addEventListener('click', openPaymentModal);
+    }
+    if (paymentModalClose) {
+        paymentModalClose.addEventListener('click', closePaymentModal);
+    }
+    if (paymentModal) {
+        paymentModal.addEventListener('click', (e) => {
+            if (e.target === paymentModal) {
+                closePaymentModal();
+            }
+        });
+    }
+    if (stripeConnectButton) {
+        stripeConnectButton.addEventListener('click', handleStripeConnect);
+    }
+    if (cancelPaymentBtn) {
+        cancelPaymentBtn.addEventListener('click', closePaymentModal);
+    }
+    if (completePaymentBtn) {
+        completePaymentBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Payment completion would be handled here in production
+            alert('Payment processing would be completed here. This is a demo.');
+        });
+    }
 }
 
 // Template change handler
@@ -883,7 +958,6 @@ function exportToPdf() {
         const escapedMake = (material.make || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         const escapedModel = (material.model || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         const escapedSize = (material.size || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-        const escapedBestHouse = (material.bestHouse || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         return `
                         <tr style="border-bottom: 1px solid #e9ecef;">
                             <td style="padding: 10px; border: 1px solid #e9ecef;">${escapedDetail}</td>
@@ -891,7 +965,7 @@ function exportToPdf() {
                             <td style="padding: 10px; border: 1px solid #e9ecef;">${escapedMake}</td>
                             <td style="padding: 10px; border: 1px solid #e9ecef;">${escapedModel}</td>
                             <td style="padding: 10px; border: 1px solid #e9ecef;">${escapedSize}</td>
-                            <td style="padding: 10px; border: 1px solid #e9ecef;">${escapedBestHouse}</td>
+                            <td style="padding: 10px; border: 1px solid #e9ecef;">Click Plumbing Supply</td>
                             <td style="padding: 10px; text-align: center; border: 1px solid #e9ecef;">${quantity}</td>
                             <td style="padding: 10px; text-align: right; border: 1px solid #e9ecef;">$${material.price.toFixed(2)}</td>
                             <td style="padding: 10px; text-align: right; border: 1px solid #e9ecef; font-weight: 600;">$${(material.price * quantity).toFixed(2)}</td>
@@ -1067,6 +1141,107 @@ function exportToPdf() {
             printWindow.print();
         }, 250);
     };
+}
+
+// Pay Now Modal Functions
+function openPayNowModal() {
+    if (payNowModal) {
+        payNowModal.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        // Set minimum date to today
+        const orderDeliveryDateInput = document.getElementById('orderDeliveryDate');
+        if (orderDeliveryDateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            orderDeliveryDateInput.setAttribute('min', today);
+        }
+    }
+}
+
+function closePayNowModal() {
+    if (payNowModal) {
+        payNowModal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Restore scrolling
+    }
+}
+
+function handleDeliveryOptionChange() {
+    const selectedOption = document.querySelector('input[name="deliveryOption"]:checked');
+    const orderDeliveryDateInput = document.getElementById('orderDeliveryDate');
+    
+    if (selectedOption && selectedOption.value === 'rush') {
+        // Hide delivery date field for rush
+        if (deliveryDateGroup) {
+            deliveryDateGroup.style.display = 'none';
+        }
+        if (orderDeliveryDateInput) {
+            orderDeliveryDateInput.removeAttribute('required');
+        }
+    } else {
+        // Show delivery date field for standard
+        if (deliveryDateGroup) {
+            deliveryDateGroup.style.display = 'block';
+        }
+        if (orderDeliveryDateInput) {
+            orderDeliveryDateInput.setAttribute('required', 'required');
+        }
+    }
+}
+
+// Payment Modal Functions
+function openPaymentModal() {
+    if (paymentModal) {
+        paymentModal.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        // Reset form state
+        if (stripeStatus) {
+            stripeStatus.style.display = 'none';
+        }
+        if (completePaymentBtn) {
+            completePaymentBtn.disabled = true;
+        }
+        if (stripeConnectButton) {
+            stripeConnectButton.style.display = 'flex';
+            stripeConnectButton.disabled = false;
+            stripeConnectButton.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.905 0-4.357-1.061-5.93-1.97L5 23.06c1.664.706 4.357 1.346 7.309 1.346 2.42 0 4.76-.624 6.43-1.688 1.86-1.188 2.966-3.152 2.966-5.267 0-4.763-2.315-6.302-6.73-7.281z" fill="#635BFF"/>
+                </svg>
+                Connect Bank Account with Stripe
+            `;
+        }
+    }
+}
+
+function closePaymentModal() {
+    if (paymentModal) {
+        paymentModal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Restore scrolling
+    }
+}
+
+function handleStripeConnect() {
+    // Simulate Stripe connection process
+    // In production, this would integrate with Stripe's API
+    if (stripeConnectButton && stripeStatus && completePaymentBtn) {
+        // Show loading state
+        stripeConnectButton.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+                    <animate attributeName="stroke-dasharray" dur="2s" values="0 31.416;15.708 15.708;0 31.416;0 31.416" repeatCount="indefinite"/>
+                    <animate attributeName="stroke-dashoffset" dur="2s" values="0;-15.708;-31.416;-31.416" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+            Connecting...
+        `;
+        stripeConnectButton.disabled = true;
+        
+        // Simulate connection delay
+        setTimeout(() => {
+            stripeConnectButton.style.display = 'none';
+            stripeStatus.style.display = 'block';
+            completePaymentBtn.disabled = false;
+        }, 2000);
+    }
 }
 
 // Make functions globally accessible for inline event handlers
