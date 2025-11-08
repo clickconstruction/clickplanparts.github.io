@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlanHub Procurement Calculator - Click Plumbing Supply</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 PlanHub Procurement Calculator</h1>
+            <p class="subtitle">Click Plumbing Supply × PlanHub.com</p>
+        </header>
+
+        <div class="template-selector">
+            <h2>Select Template</h2>
+            <div class="template-buttons">
+                <button class="template-btn active" data-template="rough-in">Rough In</button>
+                <button class="template-btn" data-template="top-out">Top Out</button>
+                <button class="template-btn" data-template="trim-set">Trim Set</button>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <div class="materials-section">
+                <h2>Materials</h2>
+                <div class="search-box">
+                    <input type="text" id="materialSearch" placeholder="Search materials by Part ID, Detail, Size, or Make...">
+                </div>
+                <div id="materialsList" class="materials-list"></div>
+            </div>
+
+            <div class="quote-section">
+                <h2>Quote Summary</h2>
+                <div id="quoteSummary" class="quote-summary">
+                    <div class="quote-row">
+                        <span class="quote-label">Total Items:</span>
+                        <span id="totalItems" class="quote-value">0</span>
+                    </div>
+                    <div class="quote-row">
+                        <span class="quote-label">Total Price:</span>
+                        <span id="totalPrice" class="quote-value">$0.00</span>
+                    </div>
+                    <div class="quote-row">
+                        <span class="quote-label">Estimated Delivery:</span>
+                        <span id="deliveryDate" class="quote-value">-</span>
+                    </div>
+                </div>
+                <div id="selectedItems" class="selected-items"></div>
+                <button id="clearBtn" class="clear-btn">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
