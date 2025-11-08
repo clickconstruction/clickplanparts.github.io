@@ -357,6 +357,24 @@ header h1 {
     background: #c82333;
 }
 
+.export-pdf-btn {
+    width: 100%;
+    padding: 15px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+}
+
+.export-pdf-btn:hover {
+    background: #5568d3;
+}
+
 .empty-state {
     text-align: center;
     padding: 40px;

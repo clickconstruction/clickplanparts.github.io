@@ -647,6 +647,7 @@ const totalItems = document.getElementById('totalItems');
 const totalPrice = document.getElementById('totalPrice');
 const deliveryDate = document.getElementById('deliveryDate');
 const clearBtn = document.getElementById('clearBtn');
+const exportPdfBtn = document.getElementById('exportPdfBtn');
 const templateButtons = document.querySelectorAll('.template-btn');
 
 // Initialize
@@ -663,6 +664,7 @@ function setupEventListeners() {
         btn.addEventListener('click', () => handleTemplateChange(btn.dataset.template));
     });
     clearBtn.addEventListener('click', clearAll);
+    exportPdfBtn.addEventListener('click', exportToPdf);
 }
 
 // Template change handler
@@ -856,6 +858,215 @@ function decrementQuantity(partId) {
         
         handleQuantityChange(partId, newQty);
     }
+}
+
+// Export to PDF (opens print dialog)
+function exportToPdf() {
+    const items = Object.values(selectedMaterials);
+    
+    if (items.length === 0) {
+        alert('Please add items to the quote before exporting.');
+        return;
+    }
+    
+    const totalItemsCount = items.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPriceValue = items.reduce((sum, item) => sum + (item.material.price * item.quantity), 0).toFixed(2);
+    const deliveryDateText = deliveryDate.textContent;
+    
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    
+    // Build table rows with proper escaping
+    const tableRows = items.map(({ material, quantity }) => {
+        const escapedDetail = (material.detail || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        const escapedPartId = (material.partId || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        const escapedMake = (material.make || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        const escapedModel = (material.model || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        const escapedSize = (material.size || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        const escapedBestHouse = (material.bestHouse || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        return `
+                        <tr style="border-bottom: 1px solid #e9ecef;">
+                            <td style="padding: 10px; border: 1px solid #e9ecef;">${escapedDetail}</td>
+                            <td style="padding: 10px; border: 1px solid #e9ecef;">${escapedPartId}</td>
+                            <td style="padding: 10px; border: 1px solid #e9ecef;">${escapedMake}</td>
+                            <td style="padding: 10px; border: 1px solid #e9ecef;">${escapedModel}</td>
+                            <td style="padding: 10px; border: 1px solid #e9ecef;">${escapedSize}</td>
+                            <td style="padding: 10px; border: 1px solid #e9ecef;">${escapedBestHouse}</td>
+                            <td style="padding: 10px; text-align: center; border: 1px solid #e9ecef;">${quantity}</td>
+                            <td style="padding: 10px; text-align: right; border: 1px solid #e9ecef;">$${material.price.toFixed(2)}</td>
+                            <td style="padding: 10px; text-align: right; border: 1px solid #e9ecef; font-weight: 600;">$${(material.price * quantity).toFixed(2)}</td>
+                        </tr>
+                    `;
+    }).join('');
+    
+    // Write the print content
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>PlanHub Quote - Print</title>
+            <style>
+                @media print {
+                    @page {
+                        margin: 1cm;
+                    }
+                    body {
+                        margin: 0;
+                        padding: 0;
+                    }
+                }
+                body {
+                    font-family: Arial, sans-serif;
+                    color: #333;
+                    padding: 40px;
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                h1 {
+                    color: #667eea;
+                    margin: 0;
+                    font-size: 28px;
+                }
+                h2 {
+                    color: #495057;
+                    font-size: 20px;
+                    margin-bottom: 15px;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                    border-bottom: 3px solid #667eea;
+                    padding-bottom: 20px;
+                }
+                .subtitle {
+                    color: #6c757d;
+                    margin: 10px 0 0 0;
+                    font-size: 16px;
+                }
+                .summary-box {
+                    background: #f8f9fa;
+                    padding: 20px;
+                    border-radius: 8px;
+                    margin-bottom: 30px;
+                }
+                .summary-row {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 10px 0;
+                    border-bottom: 1px solid #e9ecef;
+                }
+                .summary-row:last-child {
+                    border-bottom: none;
+                }
+                .summary-label {
+                    font-weight: 600;
+                    color: #495057;
+                }
+                .summary-value {
+                    font-weight: 700;
+                    color: #667eea;
+                    font-size: 18px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 10px;
+                    font-size: 11px;
+                }
+                th {
+                    background: #667eea;
+                    color: white;
+                    padding: 10px;
+                    text-align: left;
+                    border: 1px solid #5568d3;
+                }
+                th:nth-child(7), th:nth-child(8), th:nth-child(9) {
+                    text-align: right;
+                }
+                th:nth-child(7) {
+                    text-align: center;
+                }
+                td {
+                    padding: 10px;
+                    border: 1px solid #e9ecef;
+                }
+                td:nth-child(7), td:nth-child(8), td:nth-child(9) {
+                    text-align: right;
+                }
+                td:nth-child(7) {
+                    text-align: center;
+                }
+                .footer {
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 2px solid #e9ecef;
+                    text-align: center;
+                    color: #6c757d;
+                    font-size: 12px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>🔧 PlanHub Procurement Calculator</h1>
+                <p class="subtitle">Proposal for Click Plumbing Supply × PlanHub.com</p>
+            </div>
+            
+            <div>
+                <h2>Quote Summary</h2>
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span class="summary-label">Total Items:</span>
+                        <span class="summary-value">${totalItemsCount}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Total Price:</span>
+                        <span class="summary-value">$${totalPriceValue}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Estimated Delivery:</span>
+                        <span class="summary-value">${deliveryDateText}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h2>Selected Items</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item Description</th>
+                            <th>Part ID</th>
+                            <th>Make</th>
+                            <th>Model</th>
+                            <th>Size</th>
+                            <th>Supplier</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="footer">
+                <p>Generated on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            </div>
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    
+    // Wait for content to load, then trigger print
+    printWindow.onload = function() {
+        setTimeout(() => {
+            printWindow.print();
+        }, 250);
+    };
 }
 
 // Make functions globally accessible for inline event handlers
