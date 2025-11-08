@@ -724,6 +724,38 @@ header h1 {
     background: #5a6268;
 }
 
+/* Thank You Modal Styles */
+.thank-you-message {
+    margin: 25px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+}
+
+.thank-you-message p {
+    color: #495057;
+    font-size: 1.05em;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.close-thank-you-btn {
+    padding: 15px 40px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.close-thank-you-btn:hover {
+    background: #5568d3;
+}
+
 .empty-state {
     text-align: center;
     padding: 40px;

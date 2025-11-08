@@ -85,19 +85,21 @@
             <form id="payNowForm">
                 <div class="form-group">
                     <label for="customerName">Full Name *</label>
-                    <input type="text" id="customerName" name="customerName" required>
+                    <input type="text" id="customerName" name="customerName" value="John Smith" required>
                 </div>
                 <div class="form-group">
                     <label for="customerEmail">Email *</label>
-                    <input type="email" id="customerEmail" name="customerEmail" required>
+                    <input type="email" id="customerEmail" name="customerEmail" value="john.smith@example.com" required>
                 </div>
                 <div class="form-group">
                     <label for="customerPhone">Phone Number *</label>
-                    <input type="tel" id="customerPhone" name="customerPhone" required>
+                    <input type="tel" id="customerPhone" name="customerPhone" value="(555) 123-4567" required>
                 </div>
                 <div class="form-group">
                     <label for="customerAddress">Address *</label>
-                    <textarea id="customerAddress" name="customerAddress" rows="3" required></textarea>
+                    <textarea id="customerAddress" name="customerAddress" rows="3" required>123 Main Street
+Suite 100
+Austin, TX 78701</textarea>
                 </div>
                 <div class="form-group">
                     <label>Delivery Option *</label>
@@ -113,7 +115,7 @@
                     </div>
                 </div>
                 <div class="form-group" id="deliveryDateGroup">
-                    <label for="orderDeliveryDate">Delivery Date *</label>
+                    <label for="orderDeliveryDate">Must Deliver By Date *</label>
                     <input type="date" id="orderDeliveryDate" name="orderDeliveryDate" required>
                 </div>
                 <div class="form-actions">
@@ -177,6 +179,20 @@
                     <button type="button" id="completePaymentBtn" class="complete-payment-btn" disabled>Complete Payment</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Thank You Modal -->
+    <div id="thankYouModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close thank-you-modal-close">&times;</span>
+            <h2>Thank You!</h2>
+            <div class="thank-you-message">
+                <p id="thankYouText"></p>
+            </div>
+            <div class="form-actions">
+                <button type="button" id="closeThankYouBtn" class="close-thank-you-btn">Close</button>
+            </div>
         </div>
     </div>
 

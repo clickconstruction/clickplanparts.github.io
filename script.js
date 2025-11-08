@@ -666,6 +666,10 @@ const stripeConnectButton = document.getElementById('stripeConnectButton');
 const stripeStatus = document.getElementById('stripeStatus');
 const completePaymentBtn = document.getElementById('completePaymentBtn');
 const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
+const thankYouModal = document.getElementById('thankYouModal');
+const thankYouModalClose = document.querySelector('.thank-you-modal-close');
+const thankYouText = document.getElementById('thankYouText');
+const closeThankYouBtn = document.getElementById('closeThankYouBtn');
 const templateButtons = document.querySelectorAll('.template-btn');
 
 // Initialize
@@ -709,8 +713,30 @@ function setupEventListeners() {
     if (sendForCallbackBtn) {
         sendForCallbackBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // Button does nothing as requested
+            const payNowForm = document.getElementById('payNowForm');
+            if (payNowForm && payNowForm.checkValidity()) {
+                const phoneNumber = document.getElementById('customerPhone').value;
+                const email = document.getElementById('customerEmail').value;
+                openThankYouModal(phoneNumber, email);
+                // Close the pay now modal
+                closePayNowModal();
+            } else {
+                payNowForm.reportValidity();
+            }
         });
+    }
+    if (thankYouModalClose) {
+        thankYouModalClose.addEventListener('click', closeThankYouModal);
+    }
+    if (thankYouModal) {
+        thankYouModal.addEventListener('click', (e) => {
+            if (e.target === thankYouModal) {
+                closeThankYouModal();
+            }
+        });
+    }
+    if (closeThankYouBtn) {
+        closeThankYouBtn.addEventListener('click', closeThankYouModal);
     }
     
     // Payment modal
@@ -1148,11 +1174,18 @@ function openPayNowModal() {
     if (payNowModal) {
         payNowModal.style.display = 'block';
         document.body.style.overflow = 'hidden'; // Prevent background scrolling
-        // Set minimum date to today
+        // Set minimum date to today and default to 5 days from today
         const orderDeliveryDateInput = document.getElementById('orderDeliveryDate');
         if (orderDeliveryDateInput) {
-            const today = new Date().toISOString().split('T')[0];
-            orderDeliveryDateInput.setAttribute('min', today);
+            const today = new Date();
+            const defaultDate = new Date(today);
+            defaultDate.setDate(today.getDate() + 5);
+            const todayStr = today.toISOString().split('T')[0];
+            const defaultDateStr = defaultDate.toISOString().split('T')[0];
+            orderDeliveryDateInput.setAttribute('min', todayStr);
+            if (!orderDeliveryDateInput.value) {
+                orderDeliveryDateInput.value = defaultDateStr;
+            }
         }
     }
 }
@@ -1241,6 +1274,22 @@ function handleStripeConnect() {
             stripeStatus.style.display = 'block';
             completePaymentBtn.disabled = false;
         }, 2000);
+    }
+}
+
+// Thank You Modal Functions
+function openThankYouModal(phoneNumber, email) {
+    if (thankYouModal && thankYouText) {
+        thankYouText.innerHTML = `Thank you, we will attempt to call you three times at <strong>${phoneNumber}</strong> before requesting you re-submit the order via email <strong>${email}</strong>. A copy of your invoice has been sent to that email.`;
+        thankYouModal.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+}
+
+function closeThankYouModal() {
+    if (thankYouModal) {
+        thankYouModal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Restore scrolling
     }
 }
 
