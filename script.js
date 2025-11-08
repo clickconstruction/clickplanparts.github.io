@@ -715,14 +715,18 @@ function renderMaterials() {
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span class="material-price">$${material.price.toFixed(2)}</span>
-                    <input 
-                        type="number" 
-                        class="quantity-input" 
-                        min="0" 
-                        value="${quantity}"
-                        data-part-id="${material.partId}"
-                        onchange="handleQuantityChange('${material.partId}', this.value)"
-                    >
+                    <div class="quantity-controls">
+                        <button class="quantity-btn quantity-down" onclick="decrementQuantity('${material.partId}')" type="button">−</button>
+                        <input 
+                            type="number" 
+                            class="quantity-input" 
+                            min="0" 
+                            value="${quantity}"
+                            data-part-id="${material.partId}"
+                            onchange="handleQuantityChange('${material.partId}', this.value)"
+                        >
+                        <button class="quantity-btn quantity-up" onclick="incrementQuantity('${material.partId}')" type="button">+</button>
+                    </div>
                 </div>
             </div>
         `;
@@ -818,6 +822,44 @@ function updateQuote() {
     }
 }
 
+// Increment quantity
+function incrementQuantity(partId) {
+    const material = MATERIALS_DATA.find(m => m.partId === partId);
+    if (!material) return;
+    
+    const currentQty = selectedMaterials[partId] ? selectedMaterials[partId].quantity : 0;
+    const newQty = currentQty + 1;
+    
+    // Update the input field immediately
+    const input = document.querySelector(`input[data-part-id="${partId}"]`);
+    if (input) {
+        input.value = newQty;
+    }
+    
+    handleQuantityChange(partId, newQty);
+}
+
+// Decrement quantity
+function decrementQuantity(partId) {
+    const material = MATERIALS_DATA.find(m => m.partId === partId);
+    if (!material) return;
+    
+    const currentQty = selectedMaterials[partId] ? selectedMaterials[partId].quantity : 0;
+    if (currentQty > 0) {
+        const newQty = currentQty - 1;
+        
+        // Update the input field immediately
+        const input = document.querySelector(`input[data-part-id="${partId}"]`);
+        if (input) {
+            input.value = newQty;
+        }
+        
+        handleQuantityChange(partId, newQty);
+    }
+}
+
 // Make functions globally accessible for inline event handlers
 window.handleQuantityChange = handleQuantityChange;
 window.removeItem = removeItem;
+window.incrementQuantity = incrementQuantity;
+window.decrementQuantity = decrementQuantity;
