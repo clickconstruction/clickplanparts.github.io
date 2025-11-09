@@ -6,7 +6,11 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-image: url('img.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     min-height: 100vh;
     padding: 20px;
     color: #333;
@@ -22,7 +26,7 @@ body {
 }
 
 header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
     padding: 40px;
     text-align: center;
@@ -127,7 +131,7 @@ header h1 {
 }
 
 .template-btn:hover {
-    background: #f0f0ff;
+    background: #f0f4ff;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
 }
@@ -173,7 +177,7 @@ header h1 {
 
 #materialSearch:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #00FFC5;
 }
 
 .materials-list {
@@ -196,7 +200,7 @@ header h1 {
 
 .material-item:hover {
     background: #e9ecef;
-    border-color: #667eea;
+    border-color: #00FFC5;
     transform: translateX(5px);
 }
 
@@ -217,7 +221,7 @@ header h1 {
 
 .material-price {
     font-weight: 700;
-    color: #667eea;
+    color: #00CC9D;
     font-size: 1.2em;
     margin-left: 15px;
 }
@@ -251,7 +255,7 @@ header h1 {
     padding: 0;
     border: 2px solid #e9ecef;
     background: white;
-    color: #667eea;
+    color: #00CC9D;
     font-size: 1.2em;
     font-weight: 700;
     cursor: pointer;
@@ -263,12 +267,12 @@ header h1 {
 }
 
 .quantity-btn:hover {
-    background: #f0f0ff;
-    border-color: #667eea;
+    background: #E6FFF9;
+    border-color: #00FFC5;
 }
 
 .quantity-btn:active {
-    background: #667eea;
+    background: #00FFC5;
     color: white;
 }
 
@@ -321,7 +325,7 @@ header h1 {
 
 .quote-value {
     font-weight: 700;
-    color: #667eea;
+    color: #00CC9D;
     font-size: 1.2em;
 }
 
@@ -359,7 +363,7 @@ header h1 {
 
 .selected-item-total {
     font-weight: 700;
-    color: #667eea;
+    color: #00CC9D;
     margin-left: 15px;
 }
 
@@ -522,7 +526,7 @@ header h1 {
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #00FFC5;
 }
 
 .form-group textarea {
@@ -655,7 +659,7 @@ header h1 {
     justify-content: center;
     gap: 10px;
     padding: 15px 30px;
-    background: #635BFF;
+    background: #00CC9D;
     color: white;
     border: none;
     border-radius: 8px;
@@ -667,9 +671,9 @@ header h1 {
 }
 
 .stripe-connect-btn:hover {
-    background: #5448E5;
+    background: #00B388;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 204, 157, 0.3);
 }
 
 .stripe-status {
