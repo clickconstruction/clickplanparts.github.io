@@ -1108,7 +1108,7 @@ function exportToPdf() {
         </head>
         <body>
             <div class="header">
-                <h1>🔧 PlanHub Procurement Calculator</h1>
+                <h1>Click / PlanHub</h1>
                 <p class="subtitle">Proposal for Click Plumbing Supply × PlanHub.com</p>
             </div>
             
