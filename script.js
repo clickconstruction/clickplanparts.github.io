@@ -683,7 +683,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupEventListeners() {
     materialSearch.addEventListener('input', handleSearch);
     templateButtons.forEach(btn => {
-        btn.addEventListener('click', () => handleTemplateChange(btn.dataset.template));
+        btn.addEventListener('click', () => {
+            if (!btn.classList.contains('disabled')) {
+                handleTemplateChange(btn.dataset.template);
+            }
+        });
     });
     clearBtn.addEventListener('click', clearAll);
     exportPdfBtn.addEventListener('click', exportToPdf);

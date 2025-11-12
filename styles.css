@@ -43,6 +43,17 @@ header h1 {
     opacity: 0.9;
 }
 
+.demo-notice {
+    font-size: 0.95em;
+    opacity: 0.85;
+    margin-top: 20px;
+    line-height: 1.6;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    font-style: italic;
+}
+
 .template-selector {
     padding: 30px 40px;
     background: #f8f9fa;
@@ -140,6 +151,20 @@ header h1 {
     background: #667eea;
     color: white;
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.template-btn.disabled {
+    background: #e9ecef;
+    color: #6c757d;
+    border-color: #dee2e6;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.template-btn.disabled:hover {
+    background: #e9ecef;
+    transform: none;
+    box-shadow: none;
 }
 
 .calculator-section {
